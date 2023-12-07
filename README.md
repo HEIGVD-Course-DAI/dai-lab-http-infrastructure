@@ -87,7 +87,7 @@ In addition to the basic docker compose configuration, we want to be able to reb
 Step 3: HTTP API server
 -----------------------
 
-This step requires a more work. The goal is to build a HTTP API with Javalin. You can implement any API of your choice, such as:
+This step requires more work. The goal is to build a HTTP API with Javalin. You can implement any API of your choice, such as:
 
 - an API to manage a list of quotes of the day
 - an API to manage a list of TODO items
@@ -263,7 +263,7 @@ The goal of this step is to deploy or develop a Web app that can be used to moni
 Optional step 2: Integration API - static Web site
 --------------------------------------------------
 
-This is a step into unknow territory. But you will figure it out.
+This is a step into unknown territory. But you will figure it out.
 
 The goal of this step is to change your static Web page to periodically make calls to your API server and show the results in the Web page. You will need JavaScript for this and this functionality is called AJAX.
 
