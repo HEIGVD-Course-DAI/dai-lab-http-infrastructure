@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-COPY /staticServer/ /app/staticServer
-COPY nginx.conf /app/nginx.conf
+COPY ./staticServer/ /usr/share/nginx
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
