@@ -16,4 +16,4 @@ Pour finir, Docker va copier le fichier de configuration de nginx dans l'image a
 
 ### nginx.conf
 Pour Nginx, nous avons créé [le fichier de configuration](./nginx.conf). <br>
-Nous avons créé une cellule "server", dans laquelle nous précisons le port qui doit écouter, le nom du serveur et la localisation des différents fichiers afin qu'ils soient utilisables par nginx (le path est à l'intérieur de l'image, puisque nginx sera lancé dans l'image, donc après la copie du Docker).
+Nous avons créé une cellule "server", dans laquelle nous précisons le port qui doit écouter, le nom du serveur et la localisation des différents fichiers afin qu'ils soient utilisables par nginx (le path est à l'intérieur de l'image, puisque nginx sera lancé dans l'image, donc après la copie du Docker)
