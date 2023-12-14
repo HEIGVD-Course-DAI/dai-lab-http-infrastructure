@@ -49,8 +49,8 @@ Create a GitHub repository for your project. You will use this repository to col
 
 ### Acceptance criteria
 
-- [ ] You have created a GitHub repository for your project.
-- [ ] The respository contains a Readme file that you will use to document your project.
+- [x] You have created a GitHub repository for your project.
+- [x] The respository contains a Readme file that you will use to document your project.
 
 
 Step 1: Static Web site
@@ -60,11 +60,11 @@ The goal of this step is to build a Docker image that contains a static HTTP ser
 
 ### Acceptance criteria
 
-- [ ] You have created a separate folder in your respository for your static Web server.
-- [ ] You have a Dockerfile based on the Nginx image. The Dockerfile copies the static site content into the image.
-- [ ] You have configured the `nginx.conf` configuration file to serve the static content on a port (normally 80).
-- [ ] You are able to explain the content of the `nginx.conf` file.
-- [ ] You can run the image and access the static content from a browser.
+- [x] You have created a separate folder in your respository for your static Web server.
+- [x] You have a Dockerfile based on the Nginx image. The Dockerfile copies the static site content into the image.
+- [x] You have configured the `nginx.conf` configuration file to serve the static content on a port (normally 80).
+- [x] You are able to explain the content of the `nginx.conf` file.
+- [x] You can run the image and access the static content from a browser.
 - [ ] You have **documented** your configuration in your report.
 
 
