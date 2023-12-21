@@ -6,8 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     image: static_server
-    ports:
-      - "1080:1080"
+    expose:
+      - "1080"
+    labels:
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=1080"
   reverse-proxy:
     # The official v2 Traefik docker image
     image: traefik:latest
@@ -21,8 +24,3 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
-  whoami:
-    # A container that exposes an API to show its IP address
-    image: traefik/whoami
-    labels:
-      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
