@@ -1,4 +1,4 @@
 FROM nginx:latest
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY static-html /usr/share/nginx/index.html
+COPY static-html /usr/share/nginx/html
