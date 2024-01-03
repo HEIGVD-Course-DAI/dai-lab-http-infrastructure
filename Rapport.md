@@ -14,13 +14,17 @@ Lab 5 - HTTP infrastructure
   Verification:
   - go to folder where Dockerfile is and run:
   
-  ```bash docker build -t image-name . ```
+  ```bash
+  docker build -t image-name . 
+  ```
   
   (chez moi le nom de l'image est 'static-web-server' mais on peut choisir n'importe lequel)
 
   - check if it's built with following command and image should be listed.
   
-  ```bash docker images ```
+  ```bash 
+  docker images 
+  ```
 - Creation of 'nginx.conf' file and configuration
   This file is the main configuration for Nginx web server.
   (For information: it contains directives that define how Nginx should function, what content it should serve and how it should handle various aspects of web requests)
@@ -59,10 +63,40 @@ Lab 5 - HTTP infrastructure
   ```
 
   Verification:
+  
   Run image
   
-  ```bash docker run -p 8080:80 static-web-server ```
+  ```bash 
+  docker run -p 8080:80 static-web-server 
+  ```
   
   Access the static content from a browser by opening a browser and going to the path below and you should be able to see the web site. 
   
-  ```bash http://localhost:8080/ ```
+  ```bash
+  http://localhost:8080/ 
+  ```
+
+## Step 2: Docker Compose
+- Creation of 'docker.compose.yml' file in 'web-static' folder
+  It specifies with docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
+  
+  It specifies the port of the host machine '8080' and the container port '80'. So when we access 'localhost:8080' in the host machine, it will be forwarded to port 80 in the container. 
+  
+  Verification:
+  Start infrastructure by running:
+  ```bash
+  docker compose up -d
+  ```
+  Access the web server by opening a browser and going to 
+  ```bash 
+    localhost:8080
+  ```
+  Stop infrastructure by running:
+  ```bash
+  docker compose down
+  ```
+  Rebuild docker image with:
+  ```bash
+  docker compose build
+  ```
+  and try starting the image and accessing the website again to check that it works.
