@@ -16,10 +16,10 @@ public class Main {
         app.post("/tasks", TaskApi::createTask);
         //Read
         app.get("/tasks", TaskApi::getAllTasks);
-        app.get("/tasks/:taskId", TaskApi::getTaskById);
+        app.get("/tasks/{taskId}", TaskApi::getTaskById);
         //Update
-        app.put("/tasks/:taskId", TaskApi::updateTask);
+        app.put("/tasks/{taskId}", TaskApi::updateTask);
         //Delete
-        app.delete("/tasks/:taskId", TaskApi::deleteTask);
+        app.delete("/tasks/{taskId}", TaskApi::deleteTask);
     }
 }
