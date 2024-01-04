@@ -6,3 +6,9 @@ services:
 
     ports:
       - "8080:80"
+
+  api:
+    build:
+      context: ../app
+    ports:
+      - "7000:7000"
