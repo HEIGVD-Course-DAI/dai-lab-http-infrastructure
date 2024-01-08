@@ -2,8 +2,8 @@
 package ch.heigvd.API;
 
 public class Task {
-    private int id;
-    private String description;
+    public int id;
+    public String description;
 
     public Task(){}    // Necessary for deserialization
     public Task(int id, String desc) {

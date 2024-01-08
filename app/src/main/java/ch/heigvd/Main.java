@@ -13,13 +13,13 @@ public class Main {
 
         // CRUD Operations
         // Create
-        app.post("/tasks", TaskApi::createTask);
+        app.post("/tasks", taskApi::createTask);
         //Read
-        app.get("/tasks", TaskApi::getAllTasks);
-        app.get("/tasks/{taskId}", TaskApi::getTaskById);
+        app.get("/tasks", taskApi::getAllTasks);
+        app.get("/tasks/{taskId}", taskApi::getTaskById);
         //Update
-        app.put("/tasks/{taskId}", TaskApi::updateTask);
+        app.put("/tasks/{taskId}", taskApi::updateTask);
         //Delete
-        app.delete("/tasks/{taskId}", TaskApi::deleteTask);
+        app.delete("/tasks/{taskId}", taskApi::deleteTask);
     }
 }
