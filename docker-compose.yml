@@ -9,6 +9,7 @@ services:
     expose:
       - "1080"
     labels:
+    # Link to access the page: localhost
       - "traefik.http.routers.web.rule=Host(`localhost`)"
       - "traefik.http.services.web.loadbalancer.server.port=1080"
   reverse-proxy:
