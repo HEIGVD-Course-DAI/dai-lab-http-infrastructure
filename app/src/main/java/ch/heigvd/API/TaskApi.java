@@ -20,6 +20,7 @@ public class TaskApi {
     public void createTask(Context ctx) {
         Task newTask = ctx.bodyAsClass(Task.class); //JSON deserialization into compatible Java Class
         tasks.put(nextTaskId++, newTask);
+        ctx.json(newTask);
         ctx.status(201);
     }
 
@@ -36,9 +37,12 @@ public class TaskApi {
 
     public void updateTask(Context ctx) {
         Integer id = Integer.parseInt(ctx.pathParam("taskId"));
-        String newDesc = ctx.pathParam("description");
 
-        tasks.get(id).setDescription(newDesc);
+        Task newTask = ctx.bodyAsClass(Task.class);
+        Task oldTask = tasks.get(id);
+        oldTask.setDescription(newTask.description);
+        tasks.put(id, oldTask);
+        ctx.json(oldTask);
         ctx.status(200);
     }
 
