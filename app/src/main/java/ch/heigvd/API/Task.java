@@ -2,16 +2,16 @@
 package ch.heigvd.API;
 
 public class Task {
-    public int id;
+    public Integer id;
     public String description;
 
     public Task(){}    // Necessary for deserialization
-    public Task(int id, String desc) {
+    public Task(Integer id, String desc) {
         this.id = id;
         this.description = desc;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -19,7 +19,7 @@ public class Task {
         return description;
     }
 
-    private void setId(int id) {
+    private void setId(Integer id) {
         this.id = id;
     }
 

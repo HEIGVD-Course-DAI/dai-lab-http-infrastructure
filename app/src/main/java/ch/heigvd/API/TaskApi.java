@@ -10,7 +10,7 @@ import io.javalin.http.Context;
 
 public class TaskApi {
     private static ConcurrentHashMap<Integer, Task> tasks = new ConcurrentHashMap<>();
-    private static int nextTaskId = 1;
+    private static Integer nextTaskId = 1;
 
     public TaskApi(){
         tasks.put(nextTaskId, new Task(nextTaskId++, "Finir labo DAI http infrastructure."));
@@ -29,13 +29,13 @@ public class TaskApi {
     }
 
     public void getTaskById(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        Integer id = Integer.parseInt(ctx.pathParam("id"));
         ctx.json(tasks.get(id));
         ctx.status(200);
     }
 
     public void updateTask(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        Integer id = Integer.parseInt(ctx.pathParam("id"));
         String newDesc = ctx.pathParam("description");
 
         tasks.get(id).setDescription(newDesc);
@@ -43,7 +43,7 @@ public class TaskApi {
     }
 
     public void deleteTask(Context ctx) {
-        int id = Integer.parseInt(ctx.pathParam("id"));
+        Integer id = Integer.parseInt(ctx.pathParam("id"));
         tasks.remove(id);
         ctx.status(204);
     }
