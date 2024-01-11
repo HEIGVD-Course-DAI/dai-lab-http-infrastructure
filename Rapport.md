@@ -78,7 +78,7 @@ Lab 5 - HTTP infrastructure
 
 ## Step 2: Docker Compose
 - Creation of 'docker.compose.yml' file in 'web-static' folder
-  It specifies with docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
+  It specifies which docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
   
   It specifies the port of the host machine '8080' and the container port '80'. So when we access 'localhost:8080' in the host machine, it will be forwarded to port 80 in the container. 
   
