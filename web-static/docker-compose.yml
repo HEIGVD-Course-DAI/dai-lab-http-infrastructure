@@ -3,12 +3,15 @@ version: '3.8'
 services:
   reverse_proxy:
     image: traefik:v2.10
+    networks:
+      - default
     command:
       - "--api.insecure=true"
       - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
     ports:
-      - 80:80
-      - 8001:8080
+      - "80:80"
+      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
@@ -20,6 +23,7 @@ services:
   api:
     build:
       context: ../app
-    labels:
-      - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
 

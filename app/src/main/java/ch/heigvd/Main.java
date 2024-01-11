@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7000);
 
-        app.get("/", ctx -> ctx.result("Hello, Javalin!"));
+        app.get("/api", ctx -> ctx.result("Hello, Javalin!"));
 
         TaskApi taskApi = new TaskApi();    // = UserController (exemple cours)
 
