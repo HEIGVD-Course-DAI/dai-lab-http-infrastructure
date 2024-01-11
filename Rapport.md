@@ -121,10 +121,23 @@ Lab 5 - HTTP infrastructure
   app.post("/tasks", TaskApi::createTask);
   //Read
   app.get("/tasks", TaskApi::getAllTasks);
-  app.get("/tasks/:taskId", TaskApi::getTaskById);
+  app.get("/tasks/{taskId}", TaskApi::getTaskById);
   //Update
-  app.put("/tasks/:taskId", TaskApi::updateTask);
+  app.put("/tasks/{taskId}", TaskApi::updateTask);
   //Delete
-  app.delete("/tasks/:taskId", TaskApi::deleteTask);
+  app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-  //TODO error handling + status code for errors
+  //TODO add photo
+
+## Step 4 Reverse proxy with Traefik
+Redémarrage des services :
+Après avoir modifié votre fichier docker-compose.yml, redémarrez vos services en exécutant :
+``bash
+docker-compose down
+docker-compose up -d
+``
+Consultation du tableau de bord Traefik :
+Ouvrez votre navigateur et allez à l'adresse où le tableau de bord Traefik est accessible. Vous devriez y voir votre routeur pour le service web.
+
+Test avec un navigateur :
+Ouvrez simplement votre navigateur pour accéder à http://localhost. Vous devriez obtenir une réponse de votre service web statique. Avec curl, la commande serait :
