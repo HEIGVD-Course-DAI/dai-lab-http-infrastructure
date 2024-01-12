@@ -20,6 +20,6 @@ public class Main {
         //Update
         app.put("/api/tasks/{taskId}", taskApi::updateTask);
         //Delete
-        app.delete("/tasks/{taskId}", taskApi::deleteTask);
+        app.delete("/api/tasks/{taskId}", taskApi::deleteTask);
     }
 }

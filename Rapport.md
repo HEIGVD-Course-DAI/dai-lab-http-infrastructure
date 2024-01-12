@@ -121,27 +121,53 @@ Lab 5 - HTTP infrastructure
   app.post("/tasks", TaskApi::createTask);
   //Read
   app.get("/tasks", TaskApi::getAllTasks);
-  app.get("/tasks/:taskId", TaskApi::getTaskById);
+  app.get("/tasks/{taskId}", TaskApi::getTaskById);
   //Update
-  app.put("/tasks/:taskId", TaskApi::updateTask);
+  app.put("/tasks/{taskId}", TaskApi::updateTask);
   //Delete
-  app.delete("/tasks/:taskId", TaskApi::deleteTask);
+  app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-  //TODO error handling + status code for errors
+  //TODO add photo
 
-## Step 4 : Reverse proxy with Traefik
+## Step 4 Reverse proxy with Traefik
 
-To establish a reverse proxy, we introduce a new service named 'reverse-proxy,' utilizing the Traefik image. Within this service, we explicitly define the HTTP port and the API port. Additionally, in the 'volumes' section, we specify that Traefik should actively monitor Docker events, aligning with the guidance outlined in the Traefik Quick Start guide. 
+To establish a reverse proxy, we introduce a new service named 'reverse-proxy,' utilizing the Traefik image. Within this service, we explicitly define the HTTP port and the API port. Additionally, in the 'volumes' section, we specify that Traefik should actively monitor Docker events, aligning with the guidance outlined in the Traefik Quick Start guide.
 We also added 'labels' instruction to specify how traefik should route incoming requests for each service.
-  1. Requests with the 'Host' header set to 'localhost' will be directed to the 'web' service.
-  1. Requests with the 'Host' header set to 'localhost' and a path prefix of '/api' should be routed to the 'api' service.
+1. Requests with the 'Host' header set to 'localhost' will be directed to the 'web' service.
+1. Requests with the 'Host' header set to 'localhost' and a path prefix of '/api' should be routed to the 'api' service.
 
-We then changed the routes to which execute each CRUD operation as the exemple below to match route for the api service. 
+We then changed the routes to which execute each CRUD operation as the exemple below to match route for the api service.
 ```java
 app.post("/tasks", TaskApi::createTask);
 ```
-to 
+to
 ```java
 app.post("/api/tasks", TaskApi::createTask);
 ```
+
+Verification:
+
+Redémarrage des services :
+Après avoir modifié votre fichier docker-compose.yml, redémarrez vos services en exécutant :
+``bash
+docker-compose down
+docker-compose up -d
+``
+Consultation du tableau de bord Traefik :
+Ouvrez votre navigateur et allez à l'adresse où le tableau de bord Traefik est accessible. Vous devriez y voir votre routeur pour le service web.
+``bash
+http://localhost:8080/dashboard/#/
+``
+
+Test avec un navigateur :
+Ouvrez simplement votre navigateur pour accéder à http://localhost. Vous devriez obtenir une réponse de votre service web statique. 
+Pour le site web static:
+`` bash
+http://localhost/80
+``
+Pour l'api:
+``bash
+http://localhost/api
+``
+
 
