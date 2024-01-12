@@ -128,3 +128,20 @@ Lab 5 - HTTP infrastructure
   app.delete("/tasks/:taskId", TaskApi::deleteTask);
   ```
   //TODO error handling + status code for errors
+
+## Step 4 : Reverse proxy with Traefik
+
+To establish a reverse proxy, we introduce a new service named 'reverse-proxy,' utilizing the Traefik image. Within this service, we explicitly define the HTTP port and the API port. Additionally, in the 'volumes' section, we specify that Traefik should actively monitor Docker events, aligning with the guidance outlined in the Traefik Quick Start guide. 
+We also added 'labels' instruction to specify how traefik should route incoming requests for each service.
+  1. Requests with the 'Host' header set to 'localhost' will be directed to the 'web' service.
+  1. Requests with the 'Host' header set to 'localhost' and a path prefix of '/api' should be routed to the 'api' service.
+
+We then changed the routes to which execute each CRUD operation as the exemple below to match route for the api service. 
+```java
+app.post("/tasks", TaskApi::createTask);
+```
+to 
+```java
+app.post("/api/tasks", TaskApi::createTask);
+```
+
