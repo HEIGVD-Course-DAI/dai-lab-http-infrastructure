@@ -16,13 +16,13 @@
 
     <build>
         <resources>
-        <resource>
-            <directory>${project.basedir}/../web-static</directory>
-            <targetPath>web-static</targetPath>
-            <includes>
-                <include>**/*</include>
-            </includes>
-        </resource>
+            <resource>
+                <directory>${project.basedir}/../web-static</directory>
+                <targetPath>web-static</targetPath>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
