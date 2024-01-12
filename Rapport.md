@@ -127,7 +127,12 @@ Lab 5 - HTTP infrastructure
   //Delete
   app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-  //TODO add photo
+![create](app/image/postTask.png)
+![readall](app/image/getTasks.png)
+![readone](app/image/getTaskById.png)
+![put](app/image/updatedTask.png)
+![delete](app/image/deleteById.png)
+![deleteafter](app/image/deleteByIdTasksAfterDelete.png)
 
 ## Step 4 Reverse proxy with Traefik
 
@@ -147,27 +152,39 @@ app.post("/api/tasks", TaskApi::createTask);
 
 Verification:
 
-Redémarrage des services :
-Après avoir modifié votre fichier docker-compose.yml, redémarrez vos services en exécutant :
+Restarting Services:
+After modifying your docker-compose.yml file, we restart our services by executing:
 ``bash
 docker-compose down
 docker-compose up -d
 ``
-Consultation du tableau de bord Traefik :
-Ouvrez votre navigateur et allez à l'adresse où le tableau de bord Traefik est accessible. Vous devriez y voir votre routeur pour le service web.
+Consulting the Traefik Dashboard:
+Open your browser and go to the address where the Traefik dashboard is accessible. There, you will find our router for the web service.
 ``bash
 http://localhost:8080/dashboard/#/
 ``
 
-Test avec un navigateur :
-Ouvrez simplement votre navigateur pour accéder à http://localhost. Vous devriez obtenir une réponse de votre service web statique. 
-Pour le site web static:
+Testing with a Browser:
+Simply open your browser to access http://localhost, which should yield a response from the static web service.
+For the static website:
 `` bash
 http://localhost/80
 ``
-Pour l'api:
+For the API:
 ``bash
 http://localhost/api
 ``
 
+## Step 5 Scalability and load balancing
 
+
+## Step 6 Load balancing with round-robin and sticky sessions
+
+
+## Step 7 Securing Traefik with HTTPS
+
+
+## Optional Steps
+# Optional Step 1 : Management UI
+
+# Optional Step 2 : Integration API - static Web site
