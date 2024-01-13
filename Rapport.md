@@ -177,7 +177,7 @@ http://localhost/api
 
 ## Step 5 Scalability and load balancing
 
-# Scalability
+### Scalability
 Initially, we need to modify our docker-compose.yml to enable Traefik to automatically discover services using labels. To add duplicated instances, we must add:
  ```bash
 deploy:
@@ -205,7 +205,7 @@ docker-compose up --scale web=<count> --scale api=<count> -d
  ```
 We can see that 4 instances have launched.
 
-# Load balancing
+### Load balancing
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 
@@ -214,6 +214,6 @@ We can see that 4 instances have launched.
 
 
 ## Optional Steps
-# Optional Step 1 : Management UI
+### Optional Step 1 : Management UI
 
-# Optional Step 2 : Integration API - static Web site
+### Optional Step 2 : Integration API - static Web site
