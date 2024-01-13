@@ -154,10 +154,10 @@ Verification:
 
 Restarting Services:
 After modifying your docker-compose.yml file, we restart our services by executing:
-``bash
+```bash
 docker-compose down
 docker-compose up -d
-``
+```
 Consulting the Traefik Dashboard:
 Open your browser and go to the address where the Traefik dashboard is accessible. There, you will find our router for the web service.
 ``bash
@@ -177,6 +177,35 @@ http://localhost/api
 
 ## Step 5 Scalability and load balancing
 
+# Scalability
+Initially, we need to modify our docker-compose.yml to enable Traefik to automatically discover services using labels. To add duplicated instances, we must add:
+ ```bash
+deploy:
+    replicas: 5
+ ```
+
+To start multiple instances of each service (web and api) and allow Traefik to detect them and distribute connections among them, we can use the "scaling" feature of Docker Compose.
+
+ ```bash
+docker-compose up --scale web=<count> --scale api=<count> -d
+ ```
+ ```bash
+> docker-compose up --scale web=4 --scale api=4 -d
+[+] Building 0.0s (0/0)                                                                                                                                                                                              docker:default
+[+] Running 9/9
+ ✔ Container web-static-traefik-1  Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-api-4      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-api-2      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-web-3      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-api-5      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-web-1      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-api-3      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-web-2      Started                                                                                                                                                                                     0.0s 
+ ✔ Container web-static-web-4      Started                                                                                                                                                                                     0.1s 
+ ```
+We can see that 4 instances have launched.
+
+# Load balancing
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 
