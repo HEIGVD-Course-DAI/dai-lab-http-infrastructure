@@ -41,7 +41,7 @@ services:
     ports:
       - "8080:80"
 ```
-le mot-clef "services" est la key du fichier yml qui sert à définir les différents containers. Dans cette key, nous créons donc un container dont le docker file se trouve dans le dosser dans lequel nous sommes, et qui s'appelle "Dockerfile". <br>
+le mot-clef "services" est la key du fichier yml qui sert à définir les différents containers. Dans cette key, nous créons donc un container nommé "web" dont le docker file se trouve dans le dosser dans lequel nous sommes, et qui s'appelle "Dockerfile". <br>
 lors du build, ce container aura l'image "my-nginx" (qui sera renommée plus tard), et sera disponible depuis l'extérieur via le port 8080.
 
 ## Partie 3
