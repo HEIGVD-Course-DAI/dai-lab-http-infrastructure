@@ -209,8 +209,8 @@ To test load balancing, simply make repeated requests to our service ( http://lo
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 To configure Traefik so that it uses persistent sessions for the instances of our dynamic server (API service), we need to use sticky sessions in our docker-compose.yml file.
- ```bash
-
+ 
+```bash
 - "traefik.http.services.api.loadbalancer.sticky.cookie=true"
 - "traefik.http.services.api.loadbalancer.sticky.cookie.name=cookieapi"
 - "traefik.http.services.api.loadbalancer.sticky.cookie.secure=true"
@@ -220,9 +220,41 @@ The first line enables the sticky sessions, the second line allows specifying a 
 For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
 
 //TODO faire la démonstration
+
 ## Step 7 Securing Traefik with HTTPS
+The first step was to create the certificate and the key using OpenSSL and the following command.
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes
+ ```
+Once created, you need to give Traefik access to these certificates so that it can use them. This is the second volume. Finally, the last one is the Traefik configuration file.
 
+```bash
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certificates:/app/certificates
+      - ./traefik.yml:/etc/traefik.yml
+ ```
+The traefik.yml file allows Traefik to use HTTPS.
 
+```bash
+providers:
+  docker: {}
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    
+api:
+  dashboard: true
+  insecure: true
+
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/cert.pem
+      keyFile: /etc/traefik/certificates/key.pem
+ ```
 ## Optional Steps
 ### Optional Step 1 : Management UI
 
