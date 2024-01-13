@@ -202,14 +202,24 @@ docker-compose up --scale web=<count> --scale api=<count> -d
  ✔ Container web-static-web-2      Started                                                                                                                                                                                     0.0s 
  ✔ Container web-static-web-4      Started                                                                                                                                                                                     0.1s 
  ```
-We can see that 4 instances have launched.
+We can see that 4 instances of our services have launched.
 If we wish to modify the number of instances, we only need to rerun the command with the new information.
 
 To test load balancing, simply make repeated requests to our service ( http://localhost for the web service or http://localhost/api for the API service).
 
 ## Step 6 Load balancing with round-robin and sticky sessions
+To configure Traefik so that it uses persistent sessions for the instances of our dynamic server (API service), we need to use sticky sessions in our docker-compose.yml file.
+ ```bash
 
+- "traefik.http.services.api.loadbalancer.sticky.cookie=true"
+- "traefik.http.services.api.loadbalancer.sticky.cookie.name=cookieapi"
+- "traefik.http.services.api.loadbalancer.sticky.cookie.secure=true"
+ ```
+The first line enables the sticky sessions, the second line allows specifying a name for it, and the last line is for securing it.
 
+For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
+
+//TODO faire la démonstration
 ## Step 7 Securing Traefik with HTTPS
 
 
