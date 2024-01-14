@@ -127,12 +127,12 @@ Lab 5 - HTTP infrastructure
   //Delete
   app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-![create](app/image/postTask.png)
-![readall](app/image/getTasks.png)
-![readone](app/image/getTaskById.png)
-![put](app/image/updatedTask.png)
-![delete](app/image/deleteById.png)
-![deleteafter](app/image/deleteByIdTasksAfterDelete.png)
+![create](app/image/step_3/postTask.png)
+![readall](app/image/step_3/getTasks.png)
+![readone](app/image/step_3/getTaskById.png)
+![put](app/image/step_3/updatedTask.png)
+![delete](app/image/step_3/deleteById.png)
+![deleteafter](app/image/step_3/deleteByIdTasksAfterDelete.png)
 
 ## Step 4 Reverse proxy with Traefik
 
@@ -213,11 +213,10 @@ You should see n containers for web service and m containers for api services be
  ✔ Container web-static-web-2      Started                                                                                                                                                                                     0.0s 
  ✔ Container web-static-web-4      Started                                                                                                                                                                                     0.1s 
  ```
+ 
 If we wish to modify the number of instances without having to stop and restart the topology, rerun the last command with the new information.
 
 If you want less instances than the number of instances currently running, use the same commands to specify the number of instances wanted and it will down scale the infrastructure.
-
-To test load balancing, simply make repeated requests to our service ( http://localhost for the web service or http://localhost/api for the API service).
 
 ### Verification steps
 1. Number of instances
@@ -238,7 +237,35 @@ We also verified this using bruno. We created a new task (this should create a n
 
 
 ## Step 6 Load balancing with round-robin and sticky sessions
+To configure Traefik so that it uses persistent sessions for the instances of our dynamic server (API service), we need to use sticky sessions in our docker-compose.yml file.
+ ```bash
 
+- "traefik.http.services.api.loadbalancer.sticky.cookie=true"
+- "traefik.http.services.api.loadbalancer.sticky.cookie.name=cookieapi"
+- "traefik.http.services.api.loadbalancer.sticky.cookie.secure=true"
+ ```
+The first line enables the sticky sessions, the second line allows specifying a name for it, and the last line is for securing it.
+
+For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
+
+### Verification steps
+1. Round-robin for static servers
+While deploying multiple instances of the web server, 
+//TODO 
+
+2. Sticky sessions for dynamic servers
+
+We verified this using bruno. We sent a first get request from which we got a cookie id:
+![readall](app/image/step_6/sticky1_getAllTasks1.png)
+![readall](app/image/step_6/sticky1_getAllTasks1_headers.png)
+Using this id, we sent a post request to create a new Task:
+![create](app/image/step_6/sticky1_postTask.png)
+We then requested all tasks again and the recently added task was indeed in the response:
+![readall](app/image/step_6/sticky1_getAllTasks1_afterPost.png)
+
+We also requested all tasks using a different cookie id and task 3 was not in the response.
+![readall](app/image/step_6/sticky2_getAllTasks1.png)
+![readall](app/image/step_6/sticky2_getAllTasks2_headers.png)
 
 ## Step 7 Securing Traefik with HTTPS
 
