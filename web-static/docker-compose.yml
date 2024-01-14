@@ -4,13 +4,21 @@ services:
   web:
     build: .
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.static.loadbalancer.server.port=80"
+    deploy:
+      replicas: 5
 
   api:
     build:
       context: ../app
     labels:
+      - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
+      - "traefik.http.services.api.loadbalancer.server.port=7000"
+    deploy:
+      replicas: 5
 
   traefik:
     image: traefik:v2.10
