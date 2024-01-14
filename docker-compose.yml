@@ -25,3 +25,11 @@ services:
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - "8080:80"
+  dynamicServer:
+    build:
+      context: dynamicServer/
+      dockerfile: Dockerfile
+    image: http-api
+    ports:
+      - "7001:7001"
