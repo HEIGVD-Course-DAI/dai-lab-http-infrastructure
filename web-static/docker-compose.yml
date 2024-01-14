@@ -3,12 +3,22 @@ version: '3.8'
 services:
   web:
     build: .
-
-    ports:
-      - "8080:80"
+    labels:
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
 
   api:
     build:
       context: ../app
+    labels:
+      - "traefik.http.routers.api.rule=Host(`localhost`) && PathPrefix(`/api`)"
+
+  traefik:
+    image: traefik:v2.10
+    command:
+      - --api.insecure=true  # Enable Traefik dashboard
+      - --providers.docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - "7000:7000"
+      - "80:80" # web static & api
+      - "8080:8080" # Traefik dashboard

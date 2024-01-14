@@ -10,8 +10,8 @@ Lab 5 - HTTP infrastructure
 - Creation of 'web-static/static-html'
 - Creation of a Dockerfile in 'web-static' folder.
   This docker file is based on the nginx image ('FROM nginx:latest'). It copies the static site content into the image ('COPY static-html /usr/share/nginx/html')
-  
-  Verification:
+
+### Verification Steps
   - go to folder where Dockerfile is and run:
   
   ```bash
@@ -62,7 +62,7 @@ Lab 5 - HTTP infrastructure
     }
   ```
 
-  Verification:
+### Verification Steps
   
   Run image
   
@@ -81,9 +81,9 @@ Lab 5 - HTTP infrastructure
   It specifies which docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
   
   It specifies the port of the host machine '8080' and the container port '80'. So when we access 'localhost:8080' in the host machine, it will be forwarded to port 80 in the container. 
-  
-  Verification:
-  Start infrastructure by running:
+
+### Verification Steps
+ Start infrastructure by running:
   ```bash
   docker compose up -d
   ```
@@ -121,10 +121,67 @@ Lab 5 - HTTP infrastructure
   app.post("/tasks", TaskApi::createTask);
   //Read
   app.get("/tasks", TaskApi::getAllTasks);
-  app.get("/tasks/:taskId", TaskApi::getTaskById);
+  app.get("/tasks/{taskId}", TaskApi::getTaskById);
   //Update
-  app.put("/tasks/:taskId", TaskApi::updateTask);
+  app.put("/tasks/{taskId}", TaskApi::updateTask);
   //Delete
-  app.delete("/tasks/:taskId", TaskApi::deleteTask);
+  app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-  //TODO error handling + status code for errors
+![create](app/image/postTask.png)
+![readall](app/image/getTasks.png)
+![readone](app/image/getTaskById.png)
+![put](app/image/updatedTask.png)
+![delete](app/image/deleteById.png)
+![deleteafter](app/image/deleteByIdTasksAfterDelete.png)
+
+## Step 4 Reverse proxy with Traefik
+
+To enhance the security and scalability of our infrastructure, we introduced a reverse proxy using Traefik. This component acts as an intermediary between client requests and backend servers, dynamically adjusting to the number of running servers. The Traefik image was added as a new service named 'reverse-proxy' in our Docker Compose file.
+
+### Configuration Details
+1. Traefik Configuration:
+We configured Traefik by introducing a new service named 'reverse-proxy,' utilizing the Traefik image.
+Within this service, we explicitly specified :
+  - `'image'` : the Docker image and version to be used for the Traefik service.
+  - `'command'` : command-line arguments that Traefik should use when starting. In our case:
+    - `--api.insecure=true` : enables Traefik dashboard
+    - `--providers.docker` :  instructs Traefik to dynamically discovers and routes to Docker containers.
+- `'volumes'` : instructs Traefik to listen to Docker events through the `/var/run/docker.sock` file, allowing it to dynamically adjust to changes in the backend server configuration.
+- `'ports'` : Specifies the port mappings between the host machine and the Traefik container. In our case:
+  - `"80:80"` : Maps port 80 on the host to port 80 on the Traefik container, enabling routing of web static and API requests.
+  - `"8080:8080"` : Maps port 8080 on the host to port 8080 on the Traefik container, providing access to the Traefik dashboard.
+
+1. Routing Configuration:
+We specified routing rules for Traefik using labels. Requests with the 'Host' header set to 'localhost' are directed to the 'web' service, while those with a 'Host' header of 'localhost' and a path prefix of '/api' are routed to the 'api' service.
+
+1. Code Modifications:
+Route definitions for CRUD operations in the code were adjusted to match the new routing configuration. For example, the route for creating tasks was changed from `app.post("/tasks", ...)` to `app.post("/api/tasks", ...)`.
+
+### Verification Steps
+
+1. Restarting Services
+After modifying your Docker Compose file, restart services by executing:
+```bash
+docker-compose down
+docker-compose up -d
+```
+1. Consulting the Traefik Dashboard 
+The Traefik dashboard are accessible at http://localhost:8080/dashboard/#/ to verify the routing configuration. 
+
+1. Testing with a Browser
+The static web service is accessible at http://localhost/80 .
+The api service is accessible at http://localhost/api .
+
+## Step 5 Scalability and load balancing
+
+
+## Step 6 Load balancing with round-robin and sticky sessions
+
+
+## Step 7 Securing Traefik with HTTPS
+
+
+## Optional Steps
+# Optional Step 1 : Management UI
+
+# Optional Step 2 : Integration API - static Web site
