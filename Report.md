@@ -134,3 +134,56 @@ Afin de résoudre ce problème, il a fallu ajouter "maven-assembly", "make-assem
 </build>
 ```
 
+## Partie 4
+### Mise en place de Traefik
+Configuration du docker compose réservée à Traefik:<br>
+```yaml
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:latest
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+```
+Nous avons donc créé un service "reverse proxy" ayant comme image "traefik". Le header command va définir une commande devant être lancée au démarrage du container.<br>
+La commande donnée ici est une commande faisant démarrer traefik avec l'API non sécurisée, ce qui veut dire que nous n'avons pas besoin de nous authentifier, ce qui permettrait à tout le monde de l'utiliser, et va configurer traefik de manière à utiliser docker comme fournisseur de configuration (c'est donc ce qui nous permet d'utiliser traefik sans fiare de fichier de configuration).<br>
+le header ports définit les ports disponibles depuis le reverse proxy. Nous pouvons donc seulement utiliser les ports 80 et 8080. Le reste est caché derrière le reverse proxy, qui peut être rendu disponible. Mais nous verrons cette partie un peu plus bas.<br>
+Le header volumes sert à donner accès à une zone afin d'y écrire ou lire à un service. Dans notre cas, nous permettons à traefik de voir les évènemets docker, afin de s'adapter dans le cas où un container apparaîtrait, ou non (Traejik met à jour les ressources disponibles dynamiquement).
+### Les services que nous avons adaptés
+Dans chaque service, nous avons retiré le mot-clef "ports" pour le remplacer par "expose". Nous avons ensuite ajouté un mot-clef, "labels", permettant de configurer le comportement de traejik vis-à-vis du service concerné.
+```yaml
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: static_server
+    expose:
+      - "1080"
+    labels:
+    # Link to access the page: localhost
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=1080"
+```
+Dans notre cas, pour le service "web", nous avons ajouté une première ligne définissant un lien, et deuxièmement, le port auquel nous voulons rediriger la connexion ou le packet dans le cas ou le lien entré précédemment est entré.<br>
+Même chose pour l'API, mais cette fois il s'agit d'un path et pas d'un lien entier:
+```yaml
+dynamicServer:
+    build:
+      context: dynamicServer/
+      dockerfile: Dockerfile
+    image: http-api
+    expose:
+      - "7001"
+    labels:
+      # Redirige tous les packets allant vers l'entrypoint "/api" vers le port 7001.
+      # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
+      - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
+```
