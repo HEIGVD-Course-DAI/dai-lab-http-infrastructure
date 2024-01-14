@@ -10,8 +10,8 @@ Lab 5 - HTTP infrastructure
 - Creation of 'web-static/static-html'
 - Creation of a Dockerfile in 'web-static' folder.
   This docker file is based on the nginx image ('FROM nginx:latest'). It copies the static site content into the image ('COPY static-html /usr/share/nginx/html')
-  
-  Verification:
+
+### Verification Steps
   - go to folder where Dockerfile is and run:
   
   ```bash
@@ -62,7 +62,7 @@ Lab 5 - HTTP infrastructure
     }
   ```
 
-  Verification:
+### Verification Steps
   
   Run image
   
@@ -81,9 +81,9 @@ Lab 5 - HTTP infrastructure
   It specifies which docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
   
   It specifies the port of the host machine '8080' and the container port '80'. So when we access 'localhost:8080' in the host machine, it will be forwarded to port 80 in the container. 
-  
-  Verification:
-  Start infrastructure by running:
+
+### Verification Steps
+ Start infrastructure by running:
   ```bash
   docker compose up -d
   ```
@@ -136,58 +136,69 @@ Lab 5 - HTTP infrastructure
 
 ## Step 4 Reverse proxy with Traefik
 
-To establish a reverse proxy, we introduce a new service named 'reverse-proxy,' utilizing the Traefik image. Within this service, we explicitly define the HTTP port and the API port. Additionally, in the 'volumes' section, we specify that Traefik should actively monitor Docker events, aligning with the guidance outlined in the Traefik Quick Start guide.
-We also added 'labels' instruction to specify how traefik should route incoming requests for each service.
-1. Requests with the 'Host' header set to 'localhost' will be directed to the 'web' service.
-1. Requests with the 'Host' header set to 'localhost' and a path prefix of '/api' should be routed to the 'api' service.
+To enhance the security and scalability of our infrastructure, we introduced a reverse proxy using Traefik. This component acts as an intermediary between client requests and backend servers, dynamically adjusting to the number of running servers. The Traefik image was added as a new service named 'reverse-proxy' in our Docker Compose file.
 
-We then changed the routes to which execute each CRUD operation as the exemple below to match route for the api service.
-```java
-app.post("/tasks", TaskApi::createTask);
-```
-to
-```java
-app.post("/api/tasks", TaskApi::createTask);
-```
+### Configuration Details
+1. Traefik Configuration:
+We configured Traefik by introducing a new service named 'reverse-proxy,' utilizing the Traefik image.
+Within this service, we explicitly specified :
+  - `'image'` : the Docker image and version to be used for the Traefik service.
+  - `'command'` : command-line arguments that Traefik should use when starting. In our case:
+    - `--api.insecure=true` : enables Traefik dashboard
+    - `--providers.docker` :  instructs Traefik to dynamically discovers and routes to Docker containers.
+- `'volumes'` : instructs Traefik to listen to Docker events through the `/var/run/docker.sock` file, allowing it to dynamically adjust to changes in the backend server configuration.
+- `'ports'` : Specifies the port mappings between the host machine and the Traefik container. In our case:
+  - `"80:80"` : Maps port 80 on the host to port 80 on the Traefik container, enabling routing of web static and API requests.
+  - `"8080:8080"` : Maps port 8080 on the host to port 8080 on the Traefik container, providing access to the Traefik dashboard.
 
-Verification:
+1. Routing Configuration:
+We specified routing rules for Traefik using labels. Requests with the 'Host' header set to 'localhost' are directed to the 'web' service, while those with a 'Host' header of 'localhost' and a path prefix of '/api' are routed to the 'api' service.
 
-Restarting Services:
-After modifying your docker-compose.yml file, we restart our services by executing:
+1. Code Modifications:
+Route definitions for CRUD operations in the code were adjusted to match the new routing configuration. For example, the route for creating tasks was changed from `app.post("/tasks", ...)` to `app.post("/api/tasks", ...)`.
+
+### Verification Steps
+
+1. Restarting Services
+After modifying your Docker Compose file, restart services by executing:
 ```bash
 docker-compose down
 docker-compose up -d
 ```
-Consulting the Traefik Dashboard:
-Open your browser and go to the address where the Traefik dashboard is accessible. There, you will find our router for the web service.
-``bash
-http://localhost:8080/dashboard/#/
-``
 
-Testing with a Browser:
-Simply open your browser to access http://localhost, which should yield a response from the static web service.
-For the static website:
-`` bash
-http://localhost/80
-``
-For the API:
-``bash
-http://localhost/api
-``
+1. Consulting the Traefik Dashboard 
+The Traefik dashboard are accessible at http://localhost:8080/dashboard/#/ to verify the routing configuration. 
+
+1. Testing with a Browser
+The static web service is accessible at http://localhost/80 .
+The api service is accessible at http://localhost/api .
 
 ## Step 5 Scalability and load balancing
 
-Initially, we need to modify our docker-compose.yml to enable Traefik to automatically discover services using labels. To add duplicated instances, we must add:
+### Configuration details 
+
+To statically modify the number of instances of web services that are started, we need to modify our docker-compose.yml. 
+This way Traefik will be able to automatically discover services using labels. To add duplicated instances, we must add:
  ```bash
 deploy:
-    replicas: 5
+    replicas: x
  ```
+Where x is the number of wanted instances. 
 
-To start multiple instances of each service (web and api) and allow Traefik to detect them and distribute connections among them, we can use the "scaling" feature of Docker Compose.
+- labels:
+  - "traefik.enable=true"  : for each service
+  - - "traefik.http.services.static.loadbalancer.server.port=x"   x = 80 for web, x = 7000 for api
+
+1. Dynamically Update Instances
+
+To start multiple instances of each service (web and api)  without having to stop and restart the topology, and allow Traefik to detect them and distribute connections among them, we can use the "scaling" feature of Docker Compose.
 
  ```bash
-docker-compose up --scale web=<count> --scale api=<count> -d
+docker-compose up --scale web=<n> --scale api=<m> -d
  ```
+
+You should see n containers for web service and m containers for api services being started (as well as one traefik container). Here's an exemple for n = 4 and m = 4.
+
  ```bash
 > docker-compose up --scale web=4 --scale api=4 -d
 [+] Building 0.0s (0/0)                                                                                                                                                                                              docker:default
@@ -202,10 +213,28 @@ docker-compose up --scale web=<count> --scale api=<count> -d
  ✔ Container web-static-web-2      Started                                                                                                                                                                                     0.0s 
  ✔ Container web-static-web-4      Started                                                                                                                                                                                     0.1s 
  ```
-We can see that 4 instances of our services have launched.
-If we wish to modify the number of instances, we only need to rerun the command with the new information.
+ 
+If we wish to modify the number of instances without having to stop and restart the topology, rerun the last command with the new information.
 
-To test load balancing, simply make repeated requests to our service ( http://localhost for the web service or http://localhost/api for the API service).
+If you want less instances than the number of instances currently running, use the same commands to specify the number of instances wanted and it will down scale the infrastructure.
+
+### Verification steps
+1. Number of instances
+Other than docker response when dynamically updating the number of instances, you can also verify it through traefik dashboard. It provides real-time information about the backend services and their instances. 
+
+Access `http://localhost:8080/dashboard/#/http/services` and verify that the number of servers next to `api@docker` correspond to number of api servers instances started and same for web servers on `static@docker`.  
+
+1. Check that the reverse proxy distributes the connections between the different instances.
+ To verify this, we used the following commands that displays the logs for the web/api service in a Docker Compose environment.
+```bash
+docker-compose logs -f web
+docker-compose logs -f api
+```
+
+We then accessed `localhost/80` multiple times and verified the logs in the terminal. It showed that for each request on our web service, traefik asked different containers. 
+
+We also verified this using bruno. We created a new task (this should create a new task in one of the containers). We then asked to get/delete the recently created task. Sometimes it would work, sometimes it would return "task not found". This was the expected results and verified traefik was indeed distributing the connections between the different instances. 
+
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 To configure Traefik so that it uses persistent sessions for the instances of our dynamic server (API service), we need to use sticky sessions in our docker-compose.yml file.
