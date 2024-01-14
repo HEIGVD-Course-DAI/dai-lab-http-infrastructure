@@ -219,6 +219,25 @@ The first line enables the sticky sessions, the second line allows specifying a 
 
 For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
 
+### Verification steps
+1. Round-robin for static servers
+While deploying multiple instances of the web server, 
+//TODO 
+
+2. Sticky sessions for dynamic servers
+
+We verified this using bruno. We sent a first get request from which we got a cookie id:
+![readall](app/image/step_6/sticky1_getAllTasks1.png)
+![readall](app/image/step_6/sticky1_getAllTasks1_headers.png)
+Using this id, we sent a post request to create a new Task:
+![create](app/image/step_6/sticky1_postTask.png)
+We then requested all tasks again and the recently added task was indeed in the response:
+![readall](app/image/step_6/sticky1_getAllTasks1_afterPost.png)
+
+We also requested all tasks using a different cookie id and task 3 was not in the response.
+![readall](app/image/step_6/sticky2_getAllTasks1.png)
+![readall](app/image/step_6/sticky2_getAllTasks2_headers.png)
+
 ## Step 7 Securing Traefik with HTTPS
 
 
