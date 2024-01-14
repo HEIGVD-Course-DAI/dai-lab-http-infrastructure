@@ -177,17 +177,30 @@ http://localhost/api
 
 ## Step 5 Scalability and load balancing
 
-Initially, we need to modify our docker-compose.yml to enable Traefik to automatically discover services using labels. To add duplicated instances, we must add:
+### Configuration details 
+
+To statically modify the number of instances of web services that are started, we need to modify our docker-compose.yml. 
+This way Traefik will be able to automatically discover services using labels. To add duplicated instances, we must add:
  ```bash
 deploy:
-    replicas: 5
+    replicas: x
  ```
+Where x is the number of wanted instances. 
 
-To start multiple instances of each service (web and api) and allow Traefik to detect them and distribute connections among them, we can use the "scaling" feature of Docker Compose.
+- labels:
+  - "traefik.enable=true"  : for each service
+  - - "traefik.http.services.static.loadbalancer.server.port=x"   x = 80 for web, x = 7000 for api
+
+1. Dynamically Update Instances
+
+To start multiple instances of each service (web and api)  without having to stop and restart the topology, and allow Traefik to detect them and distribute connections among them, we can use the "scaling" feature of Docker Compose.
 
  ```bash
-docker-compose up --scale web=<count> --scale api=<count> -d
+docker-compose up --scale web=<n> --scale api=<m> -d
  ```
+
+You should see n containers for web service and m containers for api services being started (as well as one traefik container). Here's an exemple for n = 4 and m = 4.
+
  ```bash
 > docker-compose up --scale web=4 --scale api=4 -d
 [+] Building 0.0s (0/0)                                                                                                                                                                                              docker:default
@@ -202,10 +215,29 @@ docker-compose up --scale web=<count> --scale api=<count> -d
  ✔ Container web-static-web-2      Started                                                                                                                                                                                     0.0s 
  ✔ Container web-static-web-4      Started                                                                                                                                                                                     0.1s 
  ```
-We can see that 4 instances have launched.
-If we wish to modify the number of instances, we only need to rerun the command with the new information.
+If we wish to modify the number of instances without having to stop and restart the topology, rerun the last command with the new information.
+
+If you want less instances than the number of instances currently running, use the same commands to specify the number of instances wanted and it will down scale the infrastructure.
 
 To test load balancing, simply make repeated requests to our service ( http://localhost for the web service or http://localhost/api for the API service).
+
+### Verification steps
+1. Number of instances
+Other than docker response when dynamically updating the number of instances, you can also verify it through traefik dashboard. It provides real-time information about the backend services and their instances. 
+
+Access `http://localhost:8080/dashboard/#/http/services` and verify that the number of servers next to `api@docker` correspond to number of api servers instances started and same for web servers on `static@docker`.  
+
+1. Check that the reverse proxy distributes the connections between the different instances.
+ To verify this, we used the following commands that displays the logs for the web/api service in a Docker Compose environment.
+```bash
+docker-compose logs -f web
+docker-compose logs -f api
+```
+
+We then accessed `localhost/80` multiple times and verified the logs in the terminal. It showed that for each request on our web service, traefik asked different containers. 
+
+We also verified this using bruno. We created a new task (this should create a new task in one of the containers). We then asked to get/delete the recently created task. Sometimes it would work, sometimes it would return "task not found". This was the expected results and verified traefik was indeed distributing the connections between the different instances. 
+
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 
