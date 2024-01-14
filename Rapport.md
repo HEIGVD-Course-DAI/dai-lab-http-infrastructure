@@ -78,7 +78,7 @@ Lab 5 - HTTP infrastructure
 
 ## Step 2: Docker Compose
 - Creation of 'docker.compose.yml' file in 'web-static' folder
-  It specifies with docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
+  It specifies which docker compose version we use, section 'service' defines a service name 'web' that uses directory specified in 'build' (here '.' so current directory) as the build context for our image. 
   
   It specifies the port of the host machine '8080' and the container port '80'. So when we access 'localhost:8080' in the host machine, it will be forwarded to port 80 in the container. 
   
@@ -100,3 +100,31 @@ Lab 5 - HTTP infrastructure
   docker compose build
   ```
   and try starting the image and accessing the website again to check that it works.
+
+## Step 3: HTTP API server
+
+- Setting up Javalin with Maven
+  Add Javalin dependency to pom.xml in 'dependency' block then clean and build it again with to make sure it's working.
+  ``bash
+  mvn clean package
+  ``
+- Define Javalin server main class that starts the Javalin server and defines the routes. 
+- Define classes and controller according to API. 
+  
+  //TODO MODIFIER SELON CHANGEMENTS
+  In our case, we have chosen to create a simple API to manage a list of tasks. Each task has an id and a description. In order to implement it, we have created a Task class and a TaskApi class that acts as a controller and handle requests. 
+  The TaskApi class has a list that tracks existing tasks as well as the id number of the next task. 
+  In order to support CRUD operations, we have defined the following routes in the main Class as well as the necessary methods in the TaskApi class.
+
+  ```java
+  // Create
+  app.post("/tasks", TaskApi::createTask);
+  //Read
+  app.get("/tasks", TaskApi::getAllTasks);
+  app.get("/tasks/:taskId", TaskApi::getTaskById);
+  //Update
+  app.put("/tasks/:taskId", TaskApi::updateTask);
+  //Delete
+  app.delete("/tasks/:taskId", TaskApi::deleteTask);
+  ```
+  //TODO error handling + status code for errors
