@@ -127,12 +127,12 @@ Lab 5 - HTTP infrastructure
   //Delete
   app.delete("/tasks/{taskId}", TaskApi::deleteTask);
   ```
-![create](app/image/postTask.png)
-![readall](app/image/getTasks.png)
-![readone](app/image/getTaskById.png)
-![put](app/image/updatedTask.png)
-![delete](app/image/deleteById.png)
-![deleteafter](app/image/deleteByIdTasksAfterDelete.png)
+![create](app/image/step_3/postTask.png)
+![readall](app/image/step_3/getTasks.png)
+![readone](app/image/step_3/getTaskById.png)
+![put](app/image/step_3/updatedTask.png)
+![delete](app/image/step_3/deleteById.png)
+![deleteafter](app/image/step_3/deleteByIdTasksAfterDelete.png)
 
 ## Step 4 Reverse proxy with Traefik
 
@@ -219,7 +219,6 @@ The first line enables the sticky sessions, the second line allows specifying a 
 
 For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
 
-//TODO faire la démonstration
 ## Step 7 Securing Traefik with HTTPS
 
 
