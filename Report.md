@@ -187,3 +187,32 @@ dynamicServer:
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
 ```
+### Pourquoi est-ce qu'un reverse proxy est utile ?
+Le reverse proxy peut servir à plusieurs choses, notamment:
+<ul>
+  <li>La sécurité</li>
+  Parce que le seul élément à être disponible et atteignable depuis le "monde extérieur" est le reverse proxy. Ceci réduit donc les menaces.
+  <li>L'optimisation</li>
+  Ce reverse proxy peut être utilisé afin d'optimiser la disparité des connexions entrantes afin d'empêcher la surcharge d'un serveur. Il est après possible de faire des sticky sessions.
+</ul>
+
+### Comment accéder au dashboard
+Jusqu'à maintenant, nous n'avons pas vraiment modifié le comportement de traefik, donc la connexion à son dashboard reste la même.<br>
+Afin de s'y connecter, il suffit d'entrer le lien "localhost:8080/dashboard/#/ .<br>
+Il serait possible de modifier ceci en faisant quelque chose de similaire à ce qui a été fait plus haut, avec le routage de l'API et du serveur statique.<br>
+
+## Partie 5
+### Mise en place du load balancing
+Pour cette partie, la mise en place était assez rapide.<br>
+En effet, la chose la plus importante a été faite dans la partie 3:<br>
+```yaml
+volumes:
+  # So that Traefik can listen to the Docker events
+  - /var/run/docker.sock:/var/run/docker.sock```
+```
+Comme dit précédemment, cette ligne donne accès à traefik à la liste de containers. Ceci permet à traefik de dynamiquement gérer les containers actifs, et donc les ajouter dans la liste de services disponibles. Les autres choses ajoutées ne sont que mineures:
+```yaml
+deploy:
+  replicas: 2
+```
+Ceci servant juste à créer plusieurs instance au démarrage du (ou des) containers afin de vérifier que traefik est capable de gérer plusieurs instances du même service, puis avons utilisé la commande <code>docker compose up --scale (service)</code> afin d'ajouter des instances pour voir comment traefik réagit. D'après ce que nous avons vu dans le dashboard, traefik détermine bel et bien sur une instance a été créée ou éteinte dynamiquement, et est capable de s'adapter et de rediriger des queries dans chaque serveur.

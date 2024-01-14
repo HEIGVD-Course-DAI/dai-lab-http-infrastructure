@@ -12,6 +12,9 @@ services:
     # Link to access the page: localhost
       - "traefik.http.routers.web.rule=Host(`localhost`)"
       - "traefik.http.services.web.loadbalancer.server.port=1080"
+    deploy:
+      replicas: 2
+#    replicas: 2
   reverse-proxy:
     # The official v2 Traefik docker image
     image: traefik:latest
@@ -37,3 +40,6 @@ services:
       # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
+    deploy:
+      replicas: 2
+#    replicas: 2
