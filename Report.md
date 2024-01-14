@@ -61,3 +61,50 @@ services:
       - "7001:7001"
 ```
 Dans ce fichier, nous avons ajouté le service "dynamicServer", qui représentera notre API. afin de build, docker se servira du Dockerfile dans dynamicServer/ pour créer une image "http-api" si elle n'existe pas, et écoutera au port 7001.
+
+### pom.xml
+Ce fichier a dû être modifié pour deux raison. <br>
+La première, est que lors de l'exécution de l'application, nous tombions sur une erreur "no main manifest attribute, in API/HTTP-API.jar", qui veut dire que le fichier jar ne contient pas l'attribut "Main-Class". Afin d'y remédier, nous avons reconstruit un fichier jar avec cette fois-ci l'attribut, en ajoutant ceci: <br>
+```html
+<configuration>
+    <archive>
+        <manifest>
+            <mainClass>org.example.Main</mainClass>
+        </manifest>
+    </archive>
+</configuration>
+```
+Ceci résolut ce problème.<br>
+Cependant, après avoir réussi à exécuter le code, une autre erreur survint (qui est un peu plus habituelle): <br>
+Exception in thread "main" java.lang.NoClassDefFoundError: io/javalin/Javalin at org.example.Main.main(Main.java:7) <br>
+Java n'arrivait donc pas à trouver Javalin.<br>
+Afin de résoudre ce problème, il a fallu ajouter "maven-assembly", "make-assembly" et "jar-with-dependencies". Ce qui, à la fin, donne ceci qui fu ajouté:
+```html
+<build>
+<plugins>
+    <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+            <archive>
+                <manifest>
+                    <mainClass>org.example.Main</mainClass>
+                </manifest>
+            </archive>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+        </configuration>
+        <executions>
+            <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- bind to the packaging phase -->
+                <goals>
+                    <goal>single</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+</build>
+```
+
