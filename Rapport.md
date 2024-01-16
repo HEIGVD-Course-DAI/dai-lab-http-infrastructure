@@ -249,11 +249,17 @@ The first line enables the sticky sessions, the second line allows specifying a 
 For static services, no change is necessary since the default behavior of Traefik is to use round-robin.
 
 ### Verification steps
+We momentarily add this line `        app.before(ctx -> System.out.println("Received a request!"));
+` in our code to display the server that received the request.
+
 1. Round-robin for static servers
-While deploying multiple instances of the web server, 
-//TODO 
+While deploying multiple instances of the web server,
+//todo complete explanation
+![round-robin](app/image/step_6/round-robin.png)
 
 2. Sticky sessions for dynamic servers
+//todo complete explanation
+![sticky](app/image/step_6/sticky1.png)
 
 We verified this using bruno. We sent a first get request from which we got a cookie id:
 ![readall](app/image/step_6/sticky1_getAllTasks1.png)
