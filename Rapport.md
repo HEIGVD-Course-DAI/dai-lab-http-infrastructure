@@ -238,8 +238,8 @@ We also verified this using bruno. We created a new task (this should create a n
 
 ## Step 6 Load balancing with round-robin and sticky sessions
 To configure Traefik so that it uses persistent sessions for the instances of our dynamic server (API service), we need to use sticky sessions in our docker-compose.yml file.
- ```bash
-
+ 
+```bash
 - "traefik.http.services.api.loadbalancer.sticky.cookie=true"
 - "traefik.http.services.api.loadbalancer.sticky.cookie.name=cookieapi"
 - "traefik.http.services.api.loadbalancer.sticky.cookie.secure=true"
@@ -268,7 +268,44 @@ We also requested all tasks using a different cookie id and task 3 was not in th
 ![readall](app/image/step_6/sticky2_getAllTasks2_headers.png)
 
 ## Step 7 Securing Traefik with HTTPS
+The first step was to create the certificate and the key using OpenSSL and the following command.
+```bash
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 3650 -nodes
+ ```
+Once created, you need to give Traefik access to these certificates so that it can use them. This is the second volume. Finally, the last one is the Traefik configuration file.
 
+```bash
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certificates:/app/certificates
+      - ./traefik.yml:/etc/traefik.yml
+ ```
+The traefik.yml file allows Traefik to use HTTPS.
+
+```bash
+providers:
+  docker: {}
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    
+api:
+  dashboard: true
+  insecure: true
+
+tls:
+  certificates:
+    - certFile: /etc/traefik/certificates/cert.pem
+      keyFile: /etc/traefik/certificates/key.pem
+ ```
+### Verification steps
+
+1. Start the infrastructure.
+1. Access traefik dashboard, you should be able to see a new entrypoint for https at port 443.
+1. Access the static web site and the API using https: `https://localhost` and `https://localhost/api`. You should be able to see the content of the web site and the API.
 
 ## Optional Steps
 ### Optional Step 1 : Management UI
