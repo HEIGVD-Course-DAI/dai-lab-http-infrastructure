@@ -255,6 +255,12 @@ tls:
     - certFile: /etc/traefik/certificates/cert.pem
       keyFile: /etc/traefik/certificates/key.pem
  ```
+### Verification steps
+
+1. Start the infrastructure.
+1. Access traefik dashboard, you should be able to see a new entrypoint for https at port 443.
+1. Access the static web site and the API using https: `https://localhost` and `https://localhost/api`. You should be able to see the content of the web site and the API.
+
 ## Optional Steps
 ### Optional Step 1 : Management UI
 
