@@ -309,5 +309,11 @@ tls:
 
 ## Optional Steps
 ### Optional Step 1 : Management UI
+// todo add configuration steps 
+#### Verification Steps
+1. Access the portainer UI at
+`https://localhost:9443/#!/2/docker/containers/`. You should be able to see the list of all current containers, their status as well as other information.
+1. Choose a container and try starting/stopping them and adding/removing instances. You should get a confirmation message (as shown in the image below) and the container should change status accordingly.
+![portainer_ex](app/image/step_7/portainer_ex.png)
 
 ### Optional Step 2 : Integration API - static Web site
