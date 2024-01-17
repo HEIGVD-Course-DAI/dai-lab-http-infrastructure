@@ -20,7 +20,6 @@ services:
     # The official v2 Traefik docker image
     image: traefik:latest
     # Enables the web UI and tells Traefik to listen to docker
-    # command: --api.insecure=true --providers.docker
     ports:
       # The HTTP port
       - "80:80"
@@ -40,8 +39,8 @@ services:
     expose:
       - "7001"
     labels:
-      # Redirige tous les packets allant vers l'entrypoint "/api" vers le port 7001.
-      # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
+      # Redirects all packets going to the "/api" entrypoint to port 7001.
+      # The API is therefore available at localhost/api, so it is possible to access localhost/api/users.
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
       - "traefik.http.services.dynamicServer.loadbalancer.sticky.cookie=true"
