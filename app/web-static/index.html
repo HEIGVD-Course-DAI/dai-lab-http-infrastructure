@@ -10,13 +10,14 @@
         const reponse = await fetch("https://localhost/api/tasks");
         const tasks = await reponse.json();
         console.log(tasks);
+        document.getElementById("tasks").innerHTML = "";
         for (task in tasks) {
             var el = document.createElement("div");
             el.innerHTML = tasks[task].description;
             document.getElementById("tasks").appendChild(el);
         }
     }
-
+    setInterval(getTasks,3000);
     getTasks();
     </script>
 
