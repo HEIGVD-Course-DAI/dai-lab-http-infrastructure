@@ -215,4 +215,33 @@ Comme dit précédemment, cette ligne donne accès à traefik à la liste de con
 deploy:
   replicas: 2
 ```
-Ceci servant juste à créer plusieurs instance au démarrage du (ou des) containers afin de vérifier que traefik est capable de gérer plusieurs instances du même service, puis avons utilisé la commande <code>docker compose up --scale (service)</code> afin d'ajouter des instances pour voir comment traefik réagit. D'après ce que nous avons vu dans le dashboard, traefik détermine bel et bien sur une instance a été créée ou éteinte dynamiquement, et est capable de s'adapter et de rediriger des queries dans chaque serveur.
+Ceci servant juste à créer plusieurs instance au démarrage du (ou des) containers afin de vérifier que traefik est capable de gérer plusieurs instances du même service, puis avons utilisé la commande <code>docker compose up --scale (service)</code> afin d'ajouter des instances pour voir comment traefik réagit. D'après ce que nous avons vu dans le dashboard, traefik détermine bel et bien si une instance a été créée ou éteinte dynamiquement, et est capable de s'adapter et de rediriger des queries dans chaque serveur.
+
+## Partie 6
+### Docker-Compose
+Pour cette partie, il a suffit d'ajouter seulement 2 lignes:<br>
+```yaml
+dynamicServer:
+  build:
+    context: dynamicServer/
+    dockerfile: Dockerfile
+  image: http-api
+  expose:
+    - "7001"
+  labels:
+    # Redirige tous les packets allant vers l'entrypoint "/api" vers le port 7001.
+    # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
+    - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
+    - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
+    - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie=true"
+    - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie.name=dynamicServerCookie"
+  deploy:
+    replicas: 2
+```
+La première ligne que nous avons ajoutée est la ligne 
+>"traefik.http.services.dynamicserver.loadbalancer.sticky.cookie=true"<br>
+
+Cette ligne va prévenir traefik que le loadbalancing du dynamicServer doit être fait avec des sticky sessions en définissant les cookies sous "true".
+
+La deuxième ligne, ci-dessous, va définir le nom du cookie, afin qu'il puisse être utilisé: <br>
+>"traefik.http.services.dynamicserver.loadbalancer.sticky.cookie.name=dynamicServerCookie"
