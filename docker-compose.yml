@@ -5,13 +5,35 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: my-nginx
+    image: static_server
+    expose:
+      - "1080"
+    labels:
+    # Link to access the page: localhost
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=1080"
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:latest
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
     ports:
-      - "8080:80"
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
   dynamicServer:
     build:
       context: dynamicServer/
       dockerfile: Dockerfile
     image: http-api
-    ports:
-      - "7001:7001"
+    expose:
+      - "7001"
+    labels:
+      # Redirige tous les packets allant vers l'entrypoint "/api" vers le port 7001.
+      # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
+      - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
