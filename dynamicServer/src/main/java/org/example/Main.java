@@ -6,12 +6,12 @@ public class Main {
     public static void main(String[] args) {
         Javalin app = Javalin.create().start(7001);
 
-        UserController userController = new UserController();
+        AnimalController AnimalController = new AnimalController();
 
-        app.get("/api/users", userController::getAll);
-        app.get("/api/users/{id}", userController::getOne);
-        app.post("/api/users/", userController::create);
-        app.put("/api/users/{id}", userController::update);
-        app.delete("/api/users/{id}", userController::delete);
+        app.get("/api/animals", AnimalController::getAll);
+        app.get("/api/animals/{id}", AnimalController::getOne);
+        app.post("/api/animals/", AnimalController::create);
+        app.put("/api/animals/{id}", AnimalController::update);
+        app.delete("/api/animals/{id}", AnimalController::delete);
     }
 }
