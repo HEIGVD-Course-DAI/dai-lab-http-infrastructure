@@ -8,3 +8,10 @@ services:
     image: my-nginx
     ports:
       - "8080:80"
+  dynamicServer:
+    build:
+      context: dynamicServer/
+      dockerfile: Dockerfile
+    image: http-api
+    ports:
+      - "7001:7001"
