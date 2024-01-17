@@ -77,11 +77,11 @@ In addition to the basic docker compose configuration, we want to be able to reb
 
 ### Acceptance criteria
 
-- [ ] You have added a docker compose configuration file to your GitHub repo.
-- [ ] You can start and stop an infrastructure with a single static Web server using docker compose.
-- [ ] You can access the Web server on your local machine on the respective port.
-- [ ] You can rebuild the docker image with `docker compose build`
-- [ ] You have **documented** your configuration in your report.
+- [x] You have added a docker compose configuration file to your GitHub repo.
+- [x] You can start and stop an infrastructure with a single static Web server using docker compose.
+- [x] You can access the Web server on your local machine on the respective port.
+- [x] You can rebuild the docker image with `docker compose build`
+- [x] You have **documented** your configuration in your report.
 
 
 Step 3: HTTP API server
@@ -105,13 +105,13 @@ Once you're finished with the implementation, create a Dockerfile for the API se
 
 ### Acceptance criteria
 
-- [ ] Your API supports all CRUD operations.
-- [ ] You are able to explain your implementation and walk us through the code.
-- [ ] You can start and stop the API server using docker compose.
-- [ ] You can access both the API and the static server from your browser.
-- [ ] You can rebuild the docker image with docker compose.
-- [ ] You can do demo where use an API testing tool to show that all CRUD operations work.
-- [ ] You have **documented** your implementation in your report.
+- [x] Your API supports all CRUD operations.
+- [x] You are able to explain your implementation and walk us through the code.
+- [x] You can start and stop the API server using docker compose.
+- [x] You can access both the API and the static server from your browser.
+- [x] You can rebuild the docker image with docker compose.
+- [x] You can do demo where use an API testing tool to show that all CRUD operations work.
+- [x] You have **documented** your implementation in your report.
 
 
 Step 4: Reverse proxy with Traefik
@@ -134,12 +134,12 @@ The steps to follow for this section are thus:
 
 ### Acceptance criteria
 
-- [ ] You can do a demo where you start from an "empty" Docker environment (no container running) and using docker compose you can start your infrastructure with 3 containers: static server, dynamic server and reverse proxy
-- [ ] In the demo you can access each server from the browser in the demo. You can prove that the routing is done correctly through the reverse proxy.
-- [ ] You are able to explain in the documentation how you have implemented the solution and walk us through the configuration and the code.
-- [ ] You are able to explain in the documentation why a reverse proxy is useful to improve the security of the infrastructure.
-- [ ] You are able to explain in the documentation how to access the dashboard of Traefik and how it works.
-- [ ] You have **documented** your configuration in your report.
+- [x] You can do a demo where you start from an "empty" Docker environment (no container running) and using docker compose you can start your infrastructure with 3 containers: static server, dynamic server and reverse proxy
+- [x] In the demo you can access each server from the browser in the demo. You can prove that the routing is done correctly through the reverse proxy.
+- [x] You are able to explain in the documentation how you have implemented the solution and walk us through the configuration and the code.
+- [x] You are able to explain in the documentation why a reverse proxy is useful to improve the security of the infrastructure.
+- [x] You are able to explain in the documentation how to access the dashboard of Traefik and how it works.
+- [x] You have **documented** your configuration in your report.
 
 
 Step 5: Scalability and load balancing
@@ -151,11 +151,11 @@ Modify your docker compose file such that several instances of each server are s
 
 ### Acceptance criteria
 
-- [ ] You can use docker compose to start the infrastructure with several instances of each server (static and dynamic).
-- [ ] You can dynamically add and remove instances of each server.
-- [ ] You can do a demo to show that Traefik performs load balancing among the instances.
-- [ ] If you add or remove instances, you can show that the load balancer is dynamically updated to use the available instances.
-- [ ] You have **documented** your configuration in your report.
+- [x] You can use docker compose to start the infrastructure with several instances of each server (static and dynamic).
+- [x] You can dynamically add and remove instances of each server.
+- [x] You can do a demo to show that Traefik performs load balancing among the instances.
+- [x] If you add or remove instances, you can show that the load balancer is dynamically updated to use the available instances.
+- [x] You have **documented** your configuration in your report.
 
 
 Step 6: Load balancing with round-robin and sticky sessions
