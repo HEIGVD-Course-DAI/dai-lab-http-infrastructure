@@ -40,6 +40,7 @@ services:
       # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
+      - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie.name=dynamicServerCookie"
     deploy:
       replicas: 2
-#    replicas: 2
