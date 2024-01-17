@@ -12,22 +12,25 @@ services:
     # Link to access the page: localhost
       - "traefik.http.routers.web.rule=Host(`localhost`)"
       - "traefik.http.services.web.loadbalancer.server.port=1080"
+      - "traefik.http.routers.web.entrypoints=http,https"
+      - "traefik.http.routers.web.tls=true"
     deploy:
       replicas: 2
-#    replicas: 2
   reverse-proxy:
     # The official v2 Traefik docker image
     image: traefik:latest
     # Enables the web UI and tells Traefik to listen to docker
-    command: --api.insecure=true --providers.docker
     ports:
       # The HTTP port
       - "80:80"
+      - "443:443"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/certificates:/etc/traefik/certificates
+      - ./traefik/traefik.yaml:/etc/traefik/traefik.yaml
   dynamicServer:
     build:
       context: dynamicServer/
@@ -36,11 +39,16 @@ services:
     expose:
       - "7001"
     labels:
-      # Redirige tous les packets allant vers l'entrypoint "/api" vers le port 7001.
-      # L'api est donc disponible dans localhost/api, il est donc possible de faire localhost/api/users.
+      # Redirects all packets going to the "/api" entrypoint to port 7001.
+      # The API is therefore available at localhost/api, so it is possible to access localhost/api/users.
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
-      - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie=true"
-      - "traefik.http.services.dynamicserver.loadbalancer.sticky.cookie.name=dynamicServerCookie"
+      - "traefik.http.services.dynamicServer.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.dynamicServer.loadbalancer.sticky.cookie.name=dynamicServerCookie"
+      - "traefik.http.routers.dynamicServer.entrypoints=http,https"
+      - "traefik.http.routers.dynamicServer.tls=true"
     deploy:
       replicas: 2
+volumes:
+  certificates:
+  traefik:

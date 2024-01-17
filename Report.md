@@ -245,3 +245,68 @@ Cette ligne va prévenir traefik que le loadbalancing du dynamicServer doit êtr
 
 La deuxième ligne, ci-dessous, va définir le nom du cookie, afin qu'il puisse être utilisé: <br>
 >"traefik.http.services.dynamicserver.loadbalancer.sticky.cookie.name=dynamicServerCookie"
+
+## Partie 7
+Avant tout, il a fallut créer un certificat qui permettra de crypter les packets en https. Pour ce faire, nous avons utilisé la commande
+>openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365
+
+qui crée un certificat auto-signé, d'une validité de 365 jours, du nom de cert.pem et sa clef, key.pem. Ces fichiers ont été placés dans le dossier ` traejik/certificates/.`<br>
+Ensuite, afin de pouvoir les utiliser, nous avons créé des volumes dans docker compose, et en définissant le path des clefs:<br>
+```yaml
+volumes:
+  certificates:
+  traefik:
+```
+qui se trouve en bas du docker compose, qui est à la même tabulation que services, et qui sert à créer les volumes. <br>
+Il a fallu ensuite définir le chemin du container, qui a été défini dans le service traefik (puisque c'est traefik qui utilisera le certificat):<br>
+```yaml
+volumes:
+  - ./traefik/certificates:/etc/traefik/certificates
+```
+Cette ligne représente le path du volume en local (partie gauche de ":"), et son path dans le container du côté droit. <br>
+Après avoir fait ceci, pour pouvoir utiliser ces certificats, il a fallu créer le fichier de configuration de base de traefik. Nous avons donc créé traefik.yaml dans `traefik/`, et avons ajouté le path vers ce fichier dans le service "traefik" de docker-compose: <br>
+```yaml
+volumes:
+- ./traefik/traefik.yaml:/etc/traefik/traefik.yaml
+```
+Et après coup, nous avons travaillé dans le fichier de configuration de traefik. <br>
+Nous avons commencé par définir le provider, qui est docker dans notre cas:<br>
+```yaml
+providers:
+  docker: {}
+```
+Pour ensuite créer 2 entrypoints: http et https, et les avons chacun link à son port (respectivement 80 et 443):
+```yaml
+entrypoints:
+  http: 
+    address: ":80"
+  https:
+    address: ":443"
+```
+Maintenant qui nous avons défini tout ceci, il faut préciser à traefik où se trouve le certificat. Pour ceci, nous avons rempli la catégorie "tls" comme suit:<br>
+```yaml
+tls:
+  certificates:
+    - certFile: /certificates/cert.pem
+      keyFile: /certificates/key.pem
+```
+Et, pour encore avoir accès au dashboard de traefik:
+```yaml
+api:
+  dashboard: true
+  insecure: true
+```
+Et donc avons retiré l'équivalent du docker-compose:
+```yaml
+command: --api.insecure=true --providers.docker
+```
+qui ne sert plus à rien.<br>
+Maintenant plus qu'à activer HTTPS sur le serveur dynamique et le statique !<br>
+Alors, pour chaque serveur, nous avons ajouté ces lignes:
+```yaml
+labels:
+  - "traefik.http.routers.web.entrypoints=http,https"
+  - "traefik.http.routers.web.tls=true"
+```
+dont la première va activer les entrypoints "http" et "https" créés précédemment, et le deuxième qui active la Transport Layer Security. Ceci était pour le serveur statique, mais il y a bien entendu les lignes équivalentes dans le serveur statique.<br>
+Après tout ça, le serveur fonctionne maintenant sous https. Si nous voulions le mettre sur internet, nous pourrions ouvrir les connexions entrantes sur un port donné, et nous enregistrer dans un DNS. Et au niveau du certificat, Nous aurions pu le générer avec Let's Encrypte.
