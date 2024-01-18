@@ -60,6 +60,8 @@ services:
     # To connect to portainer: enter portainer.localhost
     - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
     - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+    - "traefik.http.routers.portainer.entrypoints=http,https"
+    - "traefik.http.routers.portainer.tls=true"
 volumes:
   portainer_data:
   certificates:

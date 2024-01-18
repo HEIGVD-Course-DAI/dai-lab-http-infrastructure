@@ -346,8 +346,8 @@ services:
 # ...
 portainer:
 image: portainer/portainer-ce
-ports:
-- "9000:9000"  # Port pour accéder à l'interface utilisateur de Portainer
+expose:
+- "9000"  # Port pour accéder à l'interface utilisateur de Portainer
 volumes:
 - /var/run/docker.sock:/var/run/docker.sock
 - portainer_data:/data
@@ -361,6 +361,19 @@ Image: Utilise l'image officielle de Portainer (portainer/portainer-ce).
 
 Ports: Expose le port 9000 pour accéder à l'interface utilisateur de Portainer depuis un navigateur web.
 
-Volumes:
+Volumes:<br>
     Le montage de /var/run/docker.sock permet à Portainer d'interagir avec le daemon Docker de l'hôte, lui donnant la capacité de gérer les conteneurs et autres ressources.
-    Le volume portainer_data est utilisé pour stocker les données persistantes de Portainer (comme les configurations et les informations de l'utilisateur).
+    Le volume portainer_data est utilisé pour stocker les données persistantes de Portainer (comme les configurations et les informations de l'utilisateur).<br><br>
+Après avoir fait ça, nous avons mis en place portainer de manière à ce qu'il soit accessible depuis `portainer.localhost`.<br>
+Pour ce faire, nous avons redirigé tout requête dirigée vers le sous-domain `portainer.localhost` au port 9000:
+```yaml
+labels:
+  # To connect to portainer: enter portainer.localhost
+  - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
+  - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+```
+Puis avons ajouté la TLS et les entrypoints pour pouvoir s'y connecter en HTTPS:
+```yaml
+- "traefik.http.routers.portainer.entrypoints=http,https"
+- "traefik.http.routers.portainer.tls=true"
+```
