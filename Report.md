@@ -5,11 +5,12 @@
 ## Partie 1
 ### Dockerfile
 Nous avons créé le fichier Dockerfile permettant de copier les différents fichiers dans l'image nginx. </br>
-<code>
-FROM nginx:latest </br> </br>
-COPY ./staticServer/ /usr/share/nginx </br>
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf </br>
-</code>
+```Dockerfile
+FROM nginx:latest
+
+COPY ./staticServer/ /usr/share/nginx
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+```
 Dans ce Dockerfile, il est spécifié que nous allons utiliser la dernière image de nginx disponible. <br>
 Ensutie, nous allons copier le contenu de staticServer dans le dosser /usr/share/nginx de nginx, afin que le framework ait accès aux fichiers statics.<br>
 Pour finir, Docker va copier le fichier de configuration de nginx dans l'image afin qu'il soit utilisable. <br>
@@ -132,6 +133,29 @@ Afin de résoudre ce problème, il a fallu ajouter "maven-assembly", "make-assem
     </plugin>
 </plugins>
 </build>
+```
+### API
+Nous avons décidé de créer une classe Animal qui représente
+un animal avec son espèce, son nom et son poids ainsi qu'une class 
+AnimalController qui fournit les méthodes nécessaires
+à la gestion des requêtes HTTP en utilisant les Context HTTP
+de Javalin.
+Ensuite, dans le main noous avons assigné chaque ressource à 
+la méthode correspondante.
+```java
+public class Main {
+public static void main(String[] args) {
+Javalin app = Javalin.create().start(7001);
+
+        AnimalController AnimalController = new AnimalController();
+
+        app.get("/api/animals", AnimalController::getAll);
+        app.get("/api/animals/{id}", AnimalController::getOne);
+        app.post("/api/animals/", AnimalController::create);
+        app.put("/api/animals/{id}", AnimalController::update);
+        app.delete("/api/animals/{id}", AnimalController::delete);
+    }
+}
 ```
 
 ## Partie 4
@@ -310,3 +334,33 @@ labels:
 ```
 dont la première va activer les entrypoints "http" et "https" créés précédemment, et le deuxième qui active la Transport Layer Security. Ceci était pour le serveur statique, mais il y a bien entendu les lignes équivalentes dans le serveur statique.<br>
 Après tout ça, le serveur fonctionne maintenant sous https. Si nous voulions le mettre sur internet, nous pourrions ouvrir les connexions entrantes sur un port donné, et nous enregistrer dans un DNS. Et au niveau du certificat, Nous aurions pu le générer avec Let's Encrypte.
+
+## Optional1 
+Dans le but d'avoir une application web pour monitorer motre infrastructure web dynamique,
+nous avons décidé d'implémenter portnair dans notre projet.
+Portainer est une plateforme de gestion de conteneurs open-source qui offre une interface utilisateur graphique pour faciliter la gestion des environnements Docker et Kubernetes. Elle permet de simplifier le déploiement, la surveillance, et la maintenance des conteneurs et des services associés.
+
+Afin de l'intégrer à notre projet il a fallu compléter le docker-compose:
+```yaml
+services:
+# ...
+portainer:
+image: portainer/portainer-ce
+ports:
+- "9000:9000"  # Port pour accéder à l'interface utilisateur de Portainer
+volumes:
+- /var/run/docker.sock:/var/run/docker.sock
+- portainer_data:/data
+
+volumes:
+portainer_data:
+```
+Explications:
+
+Image: Utilise l'image officielle de Portainer (portainer/portainer-ce).
+
+Ports: Expose le port 9000 pour accéder à l'interface utilisateur de Portainer depuis un navigateur web.
+
+Volumes:
+    Le montage de /var/run/docker.sock permet à Portainer d'interagir avec le daemon Docker de l'hôte, lui donnant la capacité de gérer les conteneurs et autres ressources.
+    Le volume portainer_data est utilisé pour stocker les données persistantes de Portainer (comme les configurations et les informations de l'utilisateur).

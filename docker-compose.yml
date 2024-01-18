@@ -51,11 +51,15 @@ services:
       replicas: 2
   portainer:
     image: portainer/portainer-ce
-    ports:
-      - "9000:9000"  # Port pour accéder à l'interface utilisateur de Portainer
+    expose:
+      - "9000"  # Port pour accéder à l'interface utilisateur de Portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+    labels:
+    # To connect to portainer: enter portainer.localhost
+    - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
+    - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 volumes:
   portainer_data:
   certificates:
