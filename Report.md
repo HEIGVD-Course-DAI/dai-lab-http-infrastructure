@@ -364,3 +364,32 @@ Ports: Expose le port 9000 pour accéder à l'interface utilisateur de Portainer
 Volumes:
     Le montage de /var/run/docker.sock permet à Portainer d'interagir avec le daemon Docker de l'hôte, lui donnant la capacité de gérer les conteneurs et autres ressources.
     Le volume portainer_data est utilisé pour stocker les données persistantes de Portainer (comme les configurations et les informations de l'utilisateur).
+
+## Optional 2
+```html
+<script>
+    // Function to fetch data from your API
+    function fetchData() {
+      fetch('https://localhost/api') // Replace with your API endpoint
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                document.getElementById('apiResult').innerHTML = JSON.stringify(data, null, 2);
+              })
+              .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+              });
+    }
+
+    // Call fetchData() function every 5 seconds
+    setInterval(fetchData, 5000);
+  </script>
+ ``` 
+fetch() est utilisé pour effectuer une requête GET vers votre API.
+La réponse de l'API est convertie en JSON.
+Les données sont ensuite affichées dans la div ayant l'identifiant "apiResult".
+setInterval est utilisé pour appeler fetchData toutes les 5 secondes (5000 millisecondes).
