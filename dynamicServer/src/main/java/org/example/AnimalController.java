@@ -14,26 +14,41 @@ class AnimalController {
 
     public void getOne(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("id"));
-        ctx.json(animals.get(id));
+        try {
+            Animal animal = animals.get(id);
+            ctx.json(animal);
+        } catch (NullPointerException e) {
+            ctx.status(404);
+            ctx.result("Object not found");
+        }
     }
 
     public void getAll(Context ctx) {
         ctx.json(animals);
+        System.out.println("Gave all animals");
     }
     public void create(Context ctx) {
         Animal animal = ctx.bodyAsClass(Animal.class);
         animals.put(++lastId, animal);
         ctx.status(201);
+        System.out.println("Created an animal");
     }
     public void delete(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("id"));
-        animals.remove(id);
-        ctx.status(204);
+        System.out.println(id + " " + animals.toString());
+        Animal animal = animals.remove(id);
+        if (animal != null) {
+            ctx.status(204);
+        } else {
+            ctx.status(404);
+            ctx.result("Animal not found");
+        }
     }
     public void update(Context ctx) {
         int id = Integer.parseInt(ctx.pathParam("id"));
         Animal animal = ctx.bodyAsClass(Animal.class);
         animals.put(id, animal);
         ctx.status(200);
+        System.out.println("Updated an animal");
     }
 }
