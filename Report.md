@@ -46,6 +46,29 @@ le mot-clef "services" est la key du fichier yml qui sert à définir les diffé
 lors du build, ce container aura l'image "my-nginx" (qui sera renommée plus tard), et sera disponible depuis l'extérieur via le port 8080.
 
 ## Partie 3
+### API
+Nous avons décidé de créer une classe Animal qui représente
+un animal avec son espèce, son nom et son poids ainsi qu'une class 
+AnimalController qui fournit les méthodes nécessaires
+à la gestion des requêtes HTTP en utilisant les Context HTTP
+de Javalin.
+Ensuite, dans le main noous avons assigné chaque ressource à 
+la méthode correspondante.
+```java
+public class Main {
+public static void main(String[] args) {
+Javalin app = Javalin.create().start(7001);
+
+        AnimalController AnimalController = new AnimalController();
+
+        app.get("/api/animals", AnimalController::getAll);
+        app.get("/api/animals/{id}", AnimalController::getOne);
+        app.post("/api/animals/", AnimalController::create);
+        app.put("/api/animals/{id}", AnimalController::update);
+        app.delete("/api/animals/{id}", AnimalController::delete);
+    }
+}
+```
 ### Dockerfile
 Avant les explications, voici le Dockerfile dans l'état actuel des choses: <br>
 ```Dockerfile
@@ -133,29 +156,6 @@ Afin de résoudre ce problème, il a fallu ajouter "maven-assembly", "make-assem
     </plugin>
 </plugins>
 </build>
-```
-### API
-Nous avons décidé de créer une classe Animal qui représente
-un animal avec son espèce, son nom et son poids ainsi qu'une class 
-AnimalController qui fournit les méthodes nécessaires
-à la gestion des requêtes HTTP en utilisant les Context HTTP
-de Javalin.
-Ensuite, dans le main noous avons assigné chaque ressource à 
-la méthode correspondante.
-```java
-public class Main {
-public static void main(String[] args) {
-Javalin app = Javalin.create().start(7001);
-
-        AnimalController AnimalController = new AnimalController();
-
-        app.get("/api/animals", AnimalController::getAll);
-        app.get("/api/animals/{id}", AnimalController::getOne);
-        app.post("/api/animals/", AnimalController::create);
-        app.put("/api/animals/{id}", AnimalController::update);
-        app.delete("/api/animals/{id}", AnimalController::delete);
-    }
-}
 ```
 
 ## Partie 4
