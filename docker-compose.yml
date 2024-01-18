@@ -40,7 +40,7 @@ services:
       - "7001"
     labels:
       # Redirects all packets going to the "/api" entrypoint to port 7001.
-      # The API is therefore available at localhost/api, so it is possible to access localhost/api/users.
+      # The API is therefore available at localhost/api, so it is possible to access localhost/api/animals.
       - "traefik.http.routers.dynamicServer.rule=PathPrefix(`/api`)"
       - "traefik.http.services.dynamicServer.loadbalancer.server.port=7001"
       - "traefik.http.services.dynamicServer.loadbalancer.sticky.cookie=true"
