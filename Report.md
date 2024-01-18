@@ -377,3 +377,34 @@ Puis avons ajouté la TLS et les entrypoints pour pouvoir s'y connecter en HTTPS
 - "traefik.http.routers.portainer.entrypoints=http,https"
 - "traefik.http.routers.portainer.tls=true"
 ```
+
+## Optional 2
+Pour cette partie, nous avons ajouté le code javascript dans le fichier HTML.
+```html
+<script>
+    // Function to fetch data from your API
+    function fetchData() {
+      fetch('https://localhost/api') // Replace with your API endpoint
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                document.getElementById('apiResult').innerHTML = JSON.stringify(data, null, 2);
+              })
+              .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+              });
+    }
+
+    // Call fetchData() function every 5 seconds
+    setInterval(fetchData, 5000);
+  </script>
+ ``` 
+fetch() est utilisé pour effectuer une requête GET vers notre API.
+La réponse de l'API est convertie en JSON.
+Les données sont ensuite affichées dans la div ayant l'identifiant "apiResult".
+setInterval est utilisé pour appeler fetchData toutes les 5 secondes (5000 millisecondes). <br>
+Actuellement, notre code javascript ne change absolument pas la page web, pour la simple et bonne raison que la page n'est pas faite pour ça. Mais le côté infrastructure fonctionne, lui.
